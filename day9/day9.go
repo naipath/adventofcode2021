@@ -61,33 +61,21 @@ func findAreaForLowPoint(lowPoint point, points []point) []point {
 	for true {
 		currentAreaSize := len(area)
 		for _, p := range area {
-			left, exists := findPoint(points, p.x-1, p.y)
-			if exists && left.value != 9 {
-				_, existsInArea := findPoint(area, left.x, left.y)
-				if !existsInArea {
-					area = append(area, left)
-				}
+			left := findPoint(points, p.x-1, p.y)
+			if left.value < 9 && !pointExists(area, left.x, left.y) {
+				area = append(area, left)
 			}
-			right, exists := findPoint(points, p.x+1, p.y)
-			if exists && right.value != 9 {
-				_, existsInArea := findPoint(area, right.x, right.y)
-				if !existsInArea {
-					area = append(area, right)
-				}
+			right := findPoint(points, p.x+1, p.y)
+			if right.value < 9 && !pointExists(area, right.x, right.y) {
+				area = append(area, right)
 			}
-			up, exists := findPoint(points, p.x, p.y-1)
-			if exists && up.value != 9 {
-				_, existsInArea := findPoint(area, up.x, up.y)
-				if !existsInArea {
-					area = append(area, up)
-				}
+			up := findPoint(points, p.x, p.y-1)
+			if up.value < 9 && !pointExists(area, up.x, up.y) {
+				area = append(area, up)
 			}
-			down, exists := findPoint(points, p.x, p.y+1)
-			if exists && down.value != 9 {
-				_, existsInArea := findPoint(area, down.x, down.y)
-				if !existsInArea {
-					area = append(area, down)
-				}
+			down := findPoint(points, p.x, p.y+1)
+			if down.value < 9 && !pointExists(area, down.x, down.y) {
+				area = append(area, down)
 			}
 		}
 		if len(area) == currentAreaSize {
@@ -99,37 +87,32 @@ func findAreaForLowPoint(lowPoint point, points []point) []point {
 
 func findLowPoints(points []point) []point {
 	var lowPoints []point
-
 	for _, p := range points {
-		isLower := true
-		left, exists := findPoint(points, p.x-1, p.y)
-		if exists && left.value <= p.value {
-			isLower = false
-		}
-		right, exists := findPoint(points, p.x+1, p.y)
-		if exists && right.value <= p.value {
-			isLower = false
-		}
-		up, exists := findPoint(points, p.x, p.y-1)
-		if exists && up.value <= p.value {
-			isLower = false
-		}
-		down, exists := findPoint(points, p.x, p.y+1)
-		if exists && down.value <= p.value {
-			isLower = false
-		}
-		if isLower {
+		left := findPoint(points, p.x-1, p.y)
+		right := findPoint(points, p.x+1, p.y)
+		up := findPoint(points, p.x, p.y-1)
+		down := findPoint(points, p.x, p.y+1)
+		if !(left.value <= p.value || right.value <= p.value || up.value <= p.value || down.value <= p.value) {
 			lowPoints = append(lowPoints, p)
 		}
 	}
 	return lowPoints
 }
 
-func findPoint(points []point, x, y int) (point, bool) {
+func findPoint(points []point, x, y int) point {
 	for _, p := range points {
 		if p.x == x && p.y == y {
-			return p, true
+			return p
 		}
 	}
-	return point{}, false
+	return point{0, 0, 9}
+}
+
+func pointExists(points []point, x, y int) bool {
+	for _, p := range points {
+		if p.x == x && p.y == y {
+			return true
+		}
+	}
+	return false
 }
