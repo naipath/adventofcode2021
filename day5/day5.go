@@ -64,12 +64,7 @@ func main() {
 
 func findOccurrences(points []string, occurrences map[string]int) {
 	for _, point := range points {
-		_, exists := occurrences[point]
-		if exists {
-			occurrences[point] = occurrences[point] + 1
-		} else {
-			occurrences[point] = 1
-		}
+		occurrences[point] = occurrences[point] + 1
 	}
 }
 

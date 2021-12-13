@@ -21,12 +21,7 @@ func main() {
 	var initialGeneration = make(map[uint8]uint64)
 
 	for _, fish := range lanternFish {
-		_, exists := initialGeneration[fish]
-		if exists {
-			initialGeneration[fish] = initialGeneration[fish] + 1
-		} else {
-			initialGeneration[fish] = 1
-		}
+		initialGeneration[fish] = initialGeneration[fish] + 1
 	}
 
 	fmt.Println("Part 1", totalFish(initialGeneration, 80))
