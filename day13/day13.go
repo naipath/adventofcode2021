@@ -17,19 +17,11 @@ func main() {
 	lines := strings.Split(string(data), "\n\n")
 
 	var dots []dot
-	maxX := 0
-	maxY := 0
 	for _, s := range strings.Split(lines[0], "\n") {
 		split := strings.Split(s, ",")
 		x, _ := strconv.Atoi(split[0])
 		y, _ := strconv.Atoi(split[1])
 		dots = append(dots, dot{x, y})
-		if maxY < y {
-			maxY = y
-		}
-		if maxX < x {
-			maxX = x
-		}
 	}
 	var instructions []string
 	for _, s := range strings.Split(lines[1], "\n") {
@@ -43,7 +35,7 @@ func main() {
 	for _, instruction := range instructions {
 		newDots = handleFold(newDots, instruction)
 	}
-	fmt.Println("Part2:")
+	fmt.Println("Part 2:")
 	printDots(newDots)
 }
 
