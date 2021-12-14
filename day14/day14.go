@@ -19,48 +19,44 @@ func main() {
 	}
 
 	fmt.Println("Part 1:", computeScore(computePolymer(initialString, conversions, 10)))
+	fmt.Println("Part 2:", computeScore(computePolymer(initialString, conversions, 40)))
 }
 
-func computeScore(s string) int {
-	counting := map[string]int{}
-	for _, i2 := range s {
-		counting[string(i2)] = counting[string(i2)] + 1
-	}
-
-	lowestCount := math.MaxInt
-	highestCount := 0
-
-	for _, u := range counting {
+func computeScore(s map[string]uint64) uint64 {
+	var lowestCount uint64 = math.MaxUint64
+	var highestCount uint64 = 0
+	for _, u := range s {
 		if u > highestCount {
 			highestCount = u
 		}
 		if u < lowestCount {
 			lowestCount = u
 		}
-
 	}
 	return highestCount - lowestCount
 }
 
-func computePolymer(initialString string, conversions map[string]string, steps int) string {
-	var b strings.Builder
-	for i := 0; i < steps; i++ {
-		b.Grow(len(initialString))
-		for i := 0; i < len(initialString); i++ {
-			currentLetter := initialString[i : i+1]
-			if i < len(initialString)-1 {
-				result, exists := conversions[initialString[i:i+2]]
-				if exists {
-					b.WriteString(currentLetter + result)
-				} else {
-					b.WriteString(currentLetter)
-				}
-			} else {
-				b.WriteString(currentLetter)
-			}
+func computePolymer(initialString string, conversions map[string]string, steps int) map[string]uint64 {
+	pairs := map[string]uint64{}
+	letterOccurrence := map[string]uint64{}
+	for i := 0; i < len(initialString); i++ {
+		if i < len(initialString)-1 {
+			pairs[initialString[i:i+2]] += 1
 		}
-		initialString = b.String()
-		b.Reset()
+		letterOccurrence[string(initialString[i])] += 1
 	}
-	return initialString
+	for i := 0; i < steps; i++ {
+		copyPairs := map[string]uint64{}
+		for k, v := range pairs {
+			copyPairs[k] = v
+		}
+		for s, count := range copyPairs {
+			n := conversions[s]
+			letterOccurrence[n] += count
+			pairs[s] -= count
+			pairs[string(s[0])+n] += count
+			pairs[n+string(s[1])] += count
+		}
+	}
+	return letterOccurrence
 }
